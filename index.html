@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JARVIS — AI Command Center</title>
+  <meta name="description" content="JARVIS: Enterprise-grade AI Voice Assistant & Command Center. Automate 90% of your daily tasks with voice or text commands." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══ AUTH SCREEN ═══ -->
+  <div id="auth-screen" class="screen active">
+    <canvas id="auth-particles"></canvas>
+    <div class="auth-container">
+      <div class="logo-block">
+        <div class="logo-orb">
+          <div class="logo-orb-ring r1"></div>
+          <div class="logo-orb-ring r2"></div>
+          <div class="logo-orb-ring r3"></div>
+          <div class="logo-orb-core">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+        </div>
+        <h1 class="logo-text">JARVIS</h1>
+        <p class="logo-sub">AI Command Center &bull; v2.1</p>
+      </div>
+
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+          <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Create Account</button>
+        </div>
+
+        <form id="login-form" class="auth-form active" onsubmit="handleLogin(event)">
+          <div class="field-group">
+            <label for="login-username">Username</label>
+            <div class="input-wrap">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <input type="text" id="login-username" placeholder="Enter your username" autocomplete="off" required />
+            </div>
+          </div>
+          <div class="field-group">
+            <label for="login-password">Password</label>
+            <div class="input-wrap">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" id="login-password" placeholder="••••••••" required />
+            </div>
+          </div>
+          <button type="submit" class="submit-btn" id="login-submit-btn">
+            <span>Initialize System</span>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+          <div id="login-error" class="error-msg"></div>
+        </form>
+
+        <form id="register-form" class="auth-form" onsubmit="handleRegister(event)">
+          <div class="field-group">
+            <label for="reg-username">Username</label>
+            <div class="input-wrap">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <input type="text" id="reg-username" placeholder="Choose a username" required />
+            </div>
+          </div>
+          <div class="field-group">
+            <label for="reg-email">Email</label>
+            <div class="input-wrap">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <input type="email" id="reg-email" placeholder="you@email.com" required />
+            </div>
+          </div>
+          <div class="field-group">
+            <label for="reg-password">Password</label>
+            <div class="input-wrap">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" id="reg-password" placeholder="Minimum 8 characters" required />
+            </div>
+          </div>
+          <button type="submit" class="submit-btn" id="register-submit-btn">
+            <span>Create Access</span>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+          <div id="reg-error" class="error-msg"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN DASHBOARD ═══ -->
+  <div id="main-screen" class="screen">
+    <canvas id="bg-particles"></canvas>
+
+    <!-- Top Navigation Bar -->
+    <header class="topbar" id="topbar">
+      <div class="topbar-left">
+        <div class="topbar-logo">
+          <div class="topbar-logo-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <span class="topbar-logo-text">JARVIS</span>
+          <span class="topbar-version">v2.1</span>
+        </div>
+      </div>
+      <div class="topbar-center">
+        <div class="status-pill" id="status-pill">
+          <div class="status-dot active" id="status-dot"></div>
+          <span id="status-text">SYSTEM ONLINE</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-time" id="topbar-time">--:--</div>
+        <div class="topbar-user">
+          <div class="avatar" id="user-avatar">V</div>
+          <span id="hud-username">USER</span>
+        </div>
+        <button class="topbar-btn" id="logout-btn" onclick="logout()" title="Logout">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard">
+
+      <!-- LEFT: Sidebar Nav -->
+      <nav class="sidebar" id="sidebar">
+        <button class="sidebar-btn active" data-section="dashboard" onclick="switchSection('dashboard')" title="Dashboard" id="nav-dashboard">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Dashboard</span>
+        </button>
+        <button class="sidebar-btn" data-section="commands" onclick="switchSection('commands')" title="Voice Command" id="nav-commands">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="17" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+          <span>Commands</span>
+        </button>
+        <button class="sidebar-btn" data-section="history" onclick="switchSection('history')" title="History" id="nav-history">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>History</span>
+        </button>
+        <button class="sidebar-btn" data-section="analytics" onclick="switchSection('analytics')" title="Analytics" id="nav-analytics">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>Analytics</span>
+        </button>
+        <div class="sidebar-spacer"></div>
+        <button class="sidebar-btn" data-section="settings" onclick="switchSection('settings')" title="Settings" id="nav-settings">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Settings</span>
+        </button>
+        <button class="sidebar-btn" onclick="processCommand('help')" title="Help">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>Help</span>
+        </button>
+      </nav>
+
+      <!-- CENTER: Content Area -->
+      <div class="content-area" id="content-area">
+
+        <!-- Section: Dashboard -->
+        <section class="section active" id="section-dashboard">
+
+          <!-- System Widgets Row -->
+          <div class="widget-row" id="widget-row">
+            <div class="widget" id="widget-cpu">
+              <div class="widget-icon cpu-icon">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+              </div>
+              <div class="widget-info">
+                <span class="widget-label">CPU</span>
+                <span class="widget-value" id="cpu-val">0%</span>
+              </div>
+              <div class="widget-bar"><div class="widget-bar-fill cpu-fill" id="cpu-bar" style="width:0%"></div></div>
+            </div>
+            <div class="widget" id="widget-ram">
+              <div class="widget-icon ram-icon">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="6" x2="6" y2="18"/><line x1="10" y1="6" x2="10" y2="18"/><line x1="14" y1="6" x2="14" y2="18"/><line x1="18" y1="6" x2="18" y2="18"/></svg>
+              </div>
+              <div class="widget-info">
+                <span class="widget-label">RAM</span>
+                <span class="widget-value" id="ram-val">0%</span>
+              </div>
+              <div class="widget-bar"><div class="widget-bar-fill ram-fill" id="ram-bar" style="width:0%"></div></div>
+            </div>
+            <div class="widget" id="widget-battery">
+              <div class="widget-icon battery-icon">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="10" x2="23" y2="14"/></svg>
+              </div>
+              <div class="widget-info">
+                <span class="widget-label">Battery</span>
+                <span class="widget-value" id="battery-val">—</span>
+              </div>
+              <div class="widget-bar"><div class="widget-bar-fill battery-fill" id="battery-bar" style="width:0%"></div></div>
+            </div>
+            <div class="widget" id="widget-commands">
+              <div class="widget-icon cmd-icon">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              </div>
+              <div class="widget-info">
+                <span class="widget-label">Commands</span>
+                <span class="widget-value" id="cmd-count">0</span>
+              </div>
+              <div class="widget-sub">Today's session</div>
+            </div>
+          </div>
+
+          <!-- Quick Actions Grid -->
+          <div class="section-header">
+            <h2>Quick Actions</h2>
+            <p>Click any tile or speak a command</p>
+          </div>
+          <div class="actions-grid" id="actions-grid">
+            <button class="action-card" onclick="processCommand('system info')" id="action-system">
+              <div class="action-icon" style="--accent:#6c5ce7">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/></svg>
+              </div>
+              <span class="action-label">System Info</span>
+              <span class="action-desc">CPU, RAM, Disk</span>
+            </button>
+            <button class="action-card" onclick="processCommand('take a screenshot')" id="action-screenshot">
+              <div class="action-icon" style="--accent:#00b894">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              </div>
+              <span class="action-label">Screenshot</span>
+              <span class="action-desc">Capture screen</span>
+            </button>
+            <button class="action-card" onclick="processCommand('weather in Delhi')" id="action-weather">
+              <div class="action-icon" style="--accent:#0984e3">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+              </div>
+              <span class="action-label">Weather</span>
+              <span class="action-desc">Live forecast</span>
+            </button>
+            <button class="action-card" onclick="processCommand('what is the time')" id="action-time">
+              <div class="action-icon" style="--accent:#fdcb6e">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <span class="action-label">Time &amp; Date</span>
+              <span class="action-desc">Current time</span>
+            </button>
+            <button class="action-card" onclick="processCommand('translate hello to Spanish')" id="action-translate">
+              <div class="action-icon" style="--accent:#00cec9">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg>
+              </div>
+              <span class="action-label">Translate</span>
+              <span class="action-desc">Any language</span>
+            </button>
+            <button class="action-card" onclick="processCommand('search latest tech news')" id="action-search">
+              <div class="action-icon" style="--accent:#e17055">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </div>
+              <span class="action-label">Web Search</span>
+              <span class="action-desc">Search anything</span>
+            </button>
+            <button class="action-card" onclick="processCommand('open youtube')" id="action-apps">
+              <div class="action-icon" style="--accent:#e84393">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </div>
+              <span class="action-label">Open Apps</span>
+              <span class="action-desc">Launch anything</span>
+            </button>
+            <button class="action-card" onclick="processCommand('define serendipity')" id="action-define">
+              <div class="action-icon" style="--accent:#a29bfe">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              </div>
+              <span class="action-label">Define Word</span>
+              <span class="action-desc">Dictionary</span>
+            </button>
+            <button class="action-card" onclick="processCommand('convert 100 km to miles')" id="action-convert">
+              <div class="action-icon" style="--accent:#fd79a8">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+              </div>
+              <span class="action-label">Convert Units</span>
+              <span class="action-desc">Measurement</span>
+            </button>
+            <button class="action-card" onclick="processCommand('flip a coin')" id="action-coin">
+              <div class="action-icon" style="--accent:#fdcb6e">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+              <span class="action-label">Flip Coin</span>
+              <span class="action-desc">Heads or tails</span>
+            </button>
+            <button class="action-card" onclick="processCommand('tell me a joke')" id="action-fun">
+              <div class="action-icon" style="--accent:#55efc4">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+              </div>
+              <span class="action-label">Fun &amp; Jokes</span>
+              <span class="action-desc">Entertainment</span>
+            </button>
+            <button class="action-card" onclick="processCommand('help')" id="action-help">
+              <div class="action-icon" style="--accent:#6c8cff">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+              <span class="action-label">All Commands</span>
+              <span class="action-desc">See everything</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Section: Voice Commands -->
+        <section class="section" id="section-commands">
+          <div class="command-center">
+
+            <!-- Keyboard Shortcuts Bar -->
+            <div class="shortcuts-bar" style="width:100%;max-width:600px">
+              <div class="shortcut"><kbd>Ctrl</kbd>+<kbd>Space</kbd> <span>Voice</span></div>
+              <div class="shortcut"><kbd>↑</kbd><kbd>↓</kbd> <span>History</span></div>
+              <div class="shortcut"><kbd>Esc</kbd> <span>Stop</span></div>
+              <div class="shortcut"><kbd>Enter</kbd> <span>Send</span></div>
+              <div class="shortcut"><kbd>Tab</kbd> <span>Autocomplete</span></div>
+            </div>
+
+            <!-- Voice Orb -->
+            <div class="orb-container" id="orb-container">
+              <div class="orb-ring r1"></div>
+              <div class="orb-ring r2"></div>
+              <div class="orb-ring r3"></div>
+              <div class="orb" id="main-orb" onclick="toggleListening()">
+                <div class="orb-inner">
+                  <svg id="mic-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="2" width="6" height="12" rx="3"/>
+                    <path d="M5 10a7 7 0 0 0 14 0"/>
+                    <line x1="12" y1="17" x2="12" y2="22"/>
+                    <line x1="8" y1="22" x2="16" y2="22"/>
+                  </svg>
+                </div>
+              </div>
+              <!-- Waveform -->
+              <div class="waveform" id="waveform">
+                <div class="wave-bar"></div><div class="wave-bar"></div>
+                <div class="wave-bar"></div><div class="wave-bar"></div>
+                <div class="wave-bar"></div><div class="wave-bar"></div>
+                <div class="wave-bar"></div><div class="wave-bar"></div>
+                <div class="wave-bar"></div><div class="wave-bar"></div>
+                <div class="wave-bar"></div><div class="wave-bar"></div>
+                <div class="wave-bar"></div><div class="wave-bar"></div>
+              </div>
+            </div>
+            <div class="orb-state" id="orb-state">Click the orb or press <kbd>Ctrl+Space</kbd> to speak</div>
+
+            <!-- Transcript -->
+            <div class="transcript-block" id="transcript-block">
+              <div class="transcript-label">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/></svg>
+                YOUR INPUT
+              </div>
+              <div class="transcript-text" id="transcript">Waiting for your command...</div>
+            </div>
+
+            <!-- Response -->
+            <div class="response-block" id="response-block">
+              <div class="response-label">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+                JARVIS RESPONSE
+              </div>
+              <div class="response-text" id="response-text">Awaiting command...</div>
+            </div>
+
+            <!-- Manual Input with Autocomplete -->
+            <div class="cmd-input-wrapper">
+              <div class="manual-input-row" id="manual-input-row">
+                <input type="text" id="manual-input" placeholder="Type a command... (e.g., 'search AI news', 'translate hello to French', 'flip a coin')"
+                  onkeydown="handleManualKey(event)" oninput="handleAutoComplete(this.value)" autocomplete="off" />
+                <button class="send-btn" id="send-btn" onclick="sendManualCommand()">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+              </div>
+              <div class="autocomplete-dropdown" id="autocomplete-dropdown" style="display:none"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section: History -->
+        <section class="section" id="section-history">
+          <div class="section-header">
+            <h2>Command History</h2>
+            <p>Your recent interactions with JARVIS — click any item to re-run</p>
+          </div>
+          <div class="history-controls">
+            <input type="text" class="history-search" id="history-search" placeholder="🔍 Filter history..." oninput="filterHistory(this.value)" />
+            <button class="export-btn" onclick="exportHistory()" id="export-btn">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export JSON
+            </button>
+          </div>
+          <div class="history-list" id="history-list">
+            <div class="skeleton skeleton-item"></div>
+            <div class="skeleton skeleton-item"></div>
+            <div class="skeleton skeleton-item"></div>
+          </div>
+        </section>
+
+        <!-- Section: Analytics -->
+        <section class="section" id="section-analytics">
+          <div class="section-header">
+            <h2>Analytics</h2>
+            <p>Usage statistics and command intelligence insights</p>
+          </div>
+          <div class="analytics-grid">
+            <!-- Summary Stats -->
+            <div class="analytics-card" id="analytics-summary">
+              <h3>Overview</h3>
+              <div class="stat-row">
+                <span class="stat-label">Total Commands</span>
+                <span class="stat-value" id="stat-total">—</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Avg Response Time</span>
+                <span class="stat-value accent" id="stat-latency">— ms</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Avg Confidence</span>
+                <span class="stat-value success" id="stat-confidence">—%</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">This Session</span>
+                <span class="stat-value" id="stat-session">0</span>
+              </div>
+            </div>
+
+            <!-- Intent Breakdown Chart -->
+            <div class="analytics-card" id="analytics-intents">
+              <h3>Top Intents</h3>
+              <div class="intent-chart" id="intent-chart">
+                <div class="analytics-empty">Run some commands to see your usage patterns!</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section: Settings -->
+        <section class="section" id="section-settings">
+          <div class="section-header">
+            <h2>Settings</h2>
+            <p>Personalize your JARVIS experience</p>
+          </div>
+          <div class="settings-grid">
+
+            <!-- Voice & Speech -->
+            <div class="settings-card">
+              <h3>🎙️ Voice & Speech</h3>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span class="setting-label">Text-to-Speech</span>
+                  <span class="setting-desc">JARVIS speaks responses aloud</span>
+                </div>
+                <label class="toggle">
+                  <input type="checkbox" id="setting-tts" checked onchange="saveSetting('tts', this.checked)" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span class="setting-label">Speech Rate</span>
+                  <span class="setting-desc">How fast JARVIS speaks</span>
+                </div>
+                <input type="range" class="setting-range" id="setting-rate" min="0.5" max="2" step="0.1" value="1.0" oninput="saveSetting('rate', this.value)" />
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span class="setting-label">Voice Language</span>
+                  <span class="setting-desc">Speech recognition language</span>
+                </div>
+                <select class="setting-select" id="setting-lang" onchange="saveSetting('lang', this.value)">
+                  <option value="en-US">English (US)</option>
+                  <option value="en-GB">English (UK)</option>
+                  <option value="hi-IN">Hindi</option>
+                  <option value="es-ES">Spanish</option>
+                  <option value="fr-FR">French</option>
+                  <option value="de-DE">German</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Behaviour -->
+            <div class="settings-card">
+              <h3>⚙️ Behaviour</h3>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span class="setting-label">Auto-switch to Commands</span>
+                  <span class="setting-desc">Navigate to Commands on voice start</span>
+                </div>
+                <label class="toggle">
+                  <input type="checkbox" id="setting-autoswitch" checked onchange="saveSetting('autoswitch', this.checked)" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span class="setting-label">Desktop Notifications</span>
+                  <span class="setting-desc">Browser notifications for reminders</span>
+                </div>
+                <label class="toggle">
+                  <input type="checkbox" id="setting-notifications" onchange="toggleNotifications(this.checked)" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span class="setting-label">Autocomplete Suggestions</span>
+                  <span class="setting-desc">Show command hints while typing</span>
+                </div>
+                <label class="toggle">
+                  <input type="checkbox" id="setting-autocomplete" checked onchange="saveSetting('autocomplete', this.checked)" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- About -->
+            <div class="settings-card">
+              <h3>ℹ️ About JARVIS</h3>
+              <div class="setting-row">
+                <span class="setting-label">Version</span>
+                <span style="font-family:var(--mono);font-size:.75rem;color:var(--primary)">v2.1.0</span>
+              </div>
+              <div class="setting-row">
+                <span class="setting-label">NLP Engine</span>
+                <span style="font-family:var(--mono);font-size:.75rem;color:var(--text-dim)">Rule-based + Regex</span>
+              </div>
+              <div class="setting-row">
+                <span class="setting-label">Backend</span>
+                <span style="font-family:var(--mono);font-size:.75rem;color:var(--text-dim)">FastAPI + SQLite</span>
+              </div>
+              <div class="setting-row">
+                <span class="setting-label">Intents Supported</span>
+                <span style="font-family:var(--mono);font-size:.75rem;color:var(--success)">30+</span>
+              </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="settings-card">
+              <h3>⚠️ Session</h3>
+              <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:.5rem">
+                <span class="setting-label">Signed in as</span>
+                <span id="settings-username" style="font-family:var(--mono);font-size:.75rem;color:var(--primary)">—</span>
+              </div>
+              <div class="setting-row" style="margin-top:.5rem">
+                <button class="export-btn" onclick="exportHistory()" style="width:100%;justify-content:center">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Export All History
+                </button>
+              </div>
+              <div class="setting-row" style="margin-top:.4rem">
+                <button onclick="logout()" style="width:100%;background:rgba(255,82,82,.12);border:1px solid rgba(255,82,82,.25);color:#ff5252;font-family:var(--font);font-size:.72rem;font-weight:600;padding:.5rem;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.4rem">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                  Sign Out
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+
+      <!-- RIGHT: Chat Panel -->
+      <aside class="chat-panel" id="chat-panel">
+        <div class="chat-header">
+          <span class="chat-title">Live Chat</span>
+          <span class="chat-badge" id="chat-badge">0</span>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-msg jarvis">
+            <div class="chat-avatar">J</div>
+            <div class="chat-bubble">Hello! I am JARVIS v2.1 — your AI command center. I now support translations, unit conversions, word definitions, and much more! How can I help?</div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-input" placeholder="Quick message..." onkeydown="handleChatKey(event)" />
+          <button class="chat-send" onclick="sendChatMessage()">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </aside>
+
+    </main>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
